@@ -8,7 +8,7 @@ export function ProtectedPage() {
   const { user, loading } = useUser();
 
   return (
-    <Layout user={user} loading={loading}>
+    <Layout>
       <h1>Protected Page</h1>
 
       {loading && <p>Loading profile...</p>}

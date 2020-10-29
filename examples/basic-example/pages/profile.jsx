@@ -7,7 +7,7 @@ export default function Profile() {
   const { user, loading } = useUser();
 
   return (
-    <Layout user={user} loading={loading}>
+    <Layout>
       <h1>Profile</h1>
 
       {loading && <p>Loading profile...</p>}
