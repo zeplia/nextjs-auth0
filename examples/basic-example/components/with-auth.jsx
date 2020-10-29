@@ -19,7 +19,9 @@ export default function withAuth(InnerComponent) {
   Authenticated.getInitialProps = async ctx => {
     if (!ctx.req) {
       const response = await fetch('/api/me');
-      return { user: await response.json() };
+      const result = response.ok ? await response.json() : null;
+
+      return { user: result };
     }
 
     const session = await auth0.getSession(ctx.req, ctx.res);
