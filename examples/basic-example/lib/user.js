@@ -1,60 +1,22 @@
-import React from 'react';
-import fetch from 'isomorphic-unfetch';
+import React, { useState, useEffect, useContext, createContext } from 'react';
 
-// Use a global to save the user, so we don't have to fetch it again after page navigations
-let userState;
+const UserContext = createContext();
 
-const User = React.createContext({ user: null, loading: false });
+export const useUser = () => useContext(UserContext);
 
-export const fetchUser = async () => {
-  if (userState !== undefined) {
-    return userState;
-  }
+export const UserProvider = ({ children, user: initialUser }) => {
+  const [user, setUser] = useState(() => initialUser); // if used withAuth, initialUser is populated
+  const [loading, setLoading] = useState(() => !initialUser); // if initialUser is populated, no loading required
 
-  const res = await fetch('/api/me');
-  userState = res.ok ? await res.json() : null;
-  return userState;
-};
+  useEffect(() => {
+    if (user) return; // if initialUser is populated, no loading required
 
-export const UserProvider = ({ value, children }) => {
-  const { user } = value;
+    (async () => {
+      const response = await fetch('/api/me');
+      setUser(await response.json());
+      setLoading(false);
+    })();
+  }, [user]);
 
-  // If the user was fetched in SSR add it to userState so we don't fetch it again
-  React.useEffect(() => {
-    if (!userState && user) {
-      userState = user;
-    }
-  }, []);
-
-  return <User.Provider value={value}>{children}</User.Provider>;
-};
-
-export const useUser = () => React.useContext(User);
-
-export const useFetchUser = () => {
-  const [data, setUser] = React.useState({
-    user: userState || null,
-    loading: userState === undefined
-  });
-
-  React.useEffect(() => {
-    if (userState !== undefined) {
-      return;
-    }
-
-    let isMounted = true;
-
-    fetchUser().then((user) => {
-      // Only set the user if the component is still mounted
-      if (isMounted) {
-        setUser({ user, loading: false });
-      }
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [userState]);
-
-  return data;
+  return <UserContext.Provider value={{ user, loading }}>{children}</UserContext.Provider>;
 };

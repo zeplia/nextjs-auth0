@@ -1,10 +1,10 @@
 import React from 'react';
 
 import Layout from '../components/layout';
-import { useFetchUser } from '../lib/user';
+import { useUser } from '../lib/user';
 
 export default function About() {
-  const { user, loading } = useFetchUser();
+  const { user, loading } = useUser();
 
   return (
     <Layout user={user} loading={loading}>

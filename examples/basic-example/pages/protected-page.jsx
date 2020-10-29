@@ -1,11 +1,11 @@
 import React from 'react';
 
 import Layout from '../components/layout';
-import { useFetchUser } from '../lib/user';
+import { useUser } from '../lib/user';
 import withAuth from '../components/with-auth';
 
 export function ProtectedPage() {
-  const { user, loading } = useFetchUser();
+  const { user, loading } = useUser();
 
   return (
     <Layout user={user} loading={loading}>
