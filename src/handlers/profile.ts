@@ -20,9 +20,6 @@ export default function profileHandler(sessionStore: ISessionStore, clientProvid
 
     const session = await sessionStore.read(req);
     if (!session || !session.user) {
-      res.json({});
-      return;
-      
       res.status(401).json({
         error: 'not_authenticated',
         description: 'The user does not have an active session or is not authenticated'
